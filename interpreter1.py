@@ -16,11 +16,25 @@ class Interpreter:
         self.current_token=None
 
     def error(self):
+        #generates the error message
         raise Exception("Error parsing input")
+
+
+    def escape_space(self):
+        #helps in escaping spaces
+        text=self.text
+        if self.pos > len(text) - 1:
+            return Token("EOF", None)
+        current_char=text[self.pos]
+        if current_char==" ":
+            self.pos += 1
+            self.escape_space()
+        return None
 
     def get_next_token(self):
         text=self.text
 
+        self.escape_space()
         if self.pos>len(text)-1:
             return Token("EOF",None)
 
@@ -33,6 +47,11 @@ class Interpreter:
 
         if current_char=="+":
             token=Token("Plus",current_char)
+            self.pos+=1
+            return token
+
+        if current_char=="-":
+            token=Token("Minus",current_char)
             self.pos+=1
             return token
 
@@ -50,17 +69,27 @@ class Interpreter:
         left=self.current_token
         self.match("Integer")#this takes the next character
 
+        #now every time match is calling the get next token
         op=self.current_token
-        self.match("Plus")
 
+        if op.value=="+":
+            self.match("Plus")
+        elif op.value=="-":
+            self.match("Minus")
+        else:
+            self.error()
+
+        #match is calling the get next token
         right=self.current_token
         self.match("Integer")
 
         print("left->"+str(left))
         print("right->" + str(right))
-        result=left.value+right.value
+        if op.value=="+":
+            result=left.value+right.value
+        elif op.value=="-":
+            result = left.value - right.value
         return result
-
 
 
 def main():
