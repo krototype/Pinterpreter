@@ -115,11 +115,15 @@ def main():
         except EOFError:
             print("error occured")
             break
+        if inp.lower()=="end":
+            print("Thankyou for using Pinterpreter")
+            break
         if not inp:
             continue
         objinter=Interpreter(inp)
         result=objinter.check()
         print(result)
+        print("If you want to end type\"end\" in the input without quotes")
 
 if __name__=="__main__":
     main()
