@@ -3,6 +3,7 @@ class Token:
     def __init__(self,type,value):
         self.type=type#we would pass these 2 things to the object->Token(Integer,3)
         self.value=value
+        print("type :" + str(self.type))
     def __str__(self):
         #after writing this you can access directly by writing obj.type or object.value
         return "Token({type},{value})".format(type=self.type,value=self.value)#just what it would print when asked to
@@ -14,6 +15,7 @@ class Interpreter:
         self.text=text
         self.pos=0
         self.current_token=None
+        self.current_char=None
 
     def error(self):
         #generates the error message
@@ -24,16 +26,30 @@ class Interpreter:
         #helps in escaping spaces
         text=self.text
         if self.pos > len(text) - 1:
-            return Token("EOF", None)
+            return None
         current_char=text[self.pos]
         if current_char==" ":
             self.pos += 1
             self.escape_space()
+
+        #if we don't get any spaces then we just return he result
         return None
+
+    def total_integer(self):
+        result=""
+        text=self.text
+        if self.pos > len(text) - 1:
+            return result
+        current_char=text[self.pos]
+        if current_char.isdigit():
+            result+=current_char
+            self.pos+=1
+            #we did call the recursion after increasing the position by 1, so that it takes the new character
+            result+=self.total_integer()
+        return result
 
     def get_next_token(self):
         text=self.text
-
         self.escape_space()
         if self.pos>len(text)-1:
             return Token("EOF",None)
@@ -41,8 +57,8 @@ class Interpreter:
         current_char=text[self.pos]
 
         if current_char>="0" and current_char<="9":
-            token=Token("Integer",int(current_char))
-            self.pos+=1
+            token=Token("Integer",int(self.total_integer()))
+            #self.pos+=1
             return token
 
         if current_char=="+":
