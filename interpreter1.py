@@ -85,26 +85,24 @@ class Interpreter:
         left=self.current_token
         self.match("Integer")#this takes the next character
 
+        result=left.value
         #now every time match is calling the get next token
-        op=self.current_token
+        while self.current_token.type in ("Plus","Minus"):
+            op=self.current_token
 
-        if op.value=="+":
-            self.match("Plus")
-        elif op.value=="-":
-            self.match("Minus")
-        else:
-            self.error()
+            if op.value=="+":
+                self.match("Plus")
+                right = self.current_token
+                self.match("Integer")
+                result += right.value
+            elif op.value=="-":
+                self.match("Minus")
+                right = self.current_token
+                self.match("Integer")
+                result -= right.value
+            else:
+                self.error()
 
-        #match is calling the get next token
-        right=self.current_token
-        self.match("Integer")
-
-        print("left->"+str(left))
-        print("right->" + str(right))
-        if op.value=="+":
-            result=left.value+right.value
-        elif op.value=="-":
-            result = left.value - right.value
         return result
 
 
