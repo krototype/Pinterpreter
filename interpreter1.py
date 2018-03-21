@@ -21,54 +21,56 @@ class Interpreter:
         #generates the error message
         raise Exception("Error parsing input")
 
+    def advance(self):
+        self.pos+=1
+        if self.pos>len(self.text)-1:
+            self.current_char=None
+        else:
+            self.current_char=self.text[self.pos]
+
 
     def escape_space(self):
         #helps in escaping spaces
-        text=self.text
-        if self.pos > len(text) - 1:
-            return None
-        current_char=text[self.pos]
-        if current_char==" ":
-            self.pos += 1
+        if self.current_char==" ":
+            print("space escaped")
+            self.advance()
             self.escape_space()
-
+        #self.advance()
         #if we don't get any spaces then we just return he result
         return None
 
     def total_integer(self):
         result=""
-        text=self.text
-        if self.pos > len(text) - 1:
+        if self.current_char==None:
             return result
-        current_char=text[self.pos]
-        if current_char.isdigit():
-            result+=current_char
-            self.pos+=1
+        if self.current_char.isdigit():
+            result+=self.current_char
+            self.advance()
             #we did call the recursion after increasing the position by 1, so that it takes the new character
             result+=self.total_integer()
         return result
 
     def get_next_token(self):
-        text=self.text
         self.escape_space()
-        if self.pos>len(text)-1:
+
+        if self.current_char==None:
             return Token("EOF",None)
 
-        current_char=text[self.pos]
-
-        if current_char>="0" and current_char<="9":
+        if self.current_char>="0" and self.current_char<="9":
             token=Token("Integer",int(self.total_integer()))
+            #self.advance()
+            return token
+
+        if self.current_char=="+":
+            token=Token("Plus",self.current_char)
+            self.advance()
             #self.pos+=1
             return token
 
-        if current_char=="+":
-            token=Token("Plus",current_char)
-            self.pos+=1
-            return token
-
-        if current_char=="-":
-            token=Token("Minus",current_char)
-            self.pos+=1
+        if self.current_char=="-":
+            token=Token("Minus",self.current_char)
+            self.advance()
+            #self.pos+=1
             return token
 
         return self.error()
@@ -81,6 +83,7 @@ class Interpreter:
 
     def check(self):
         #taking the first character
+        self.current_char=self.text[self.pos]
         self.current_token=self.get_next_token()
         left=self.current_token
         self.match("Integer")#this takes the next character
