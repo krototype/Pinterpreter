@@ -10,16 +10,15 @@ class Token:
     def __repr__(self):
         return self.__str__()
 
-class Interpreter:
+class Lexer:
     def __init__(self,text):
         self.text=text
         self.pos=0
-        self.current_token=None
-        self.current_char=None
+        self.current_char = self.text[self.pos]
 
     def error(self):
         #generates the error message
-        raise Exception("Error parsing input")
+        raise Exception("Invalid character")
 
     def advance(self):
         self.pos+=1
@@ -27,7 +26,6 @@ class Interpreter:
             self.current_char=None
         else:
             self.current_char=self.text[self.pos]
-
 
     def escape_space(self):
         #helps in escaping spaces
@@ -58,33 +56,44 @@ class Interpreter:
 
         if self.current_char>="0" and self.current_char<="9":
             token=Token("Integer",int(self.total_integer()))
-            #self.advance()
             return token
 
         if self.current_char=="+":
             token=Token("Plus",self.current_char)
             self.advance()
-            #self.pos+=1
             return token
 
         if self.current_char=="-":
             token=Token("Minus",self.current_char)
             self.advance()
-            #self.pos+=1
             return token
 
         return self.error()
 
+
+class Interpreter:
+    def __init__(self,lexer):
+        self.lexer=lexer
+        self.current_token=self.lexer.get_next_token()
+
+    def error(self):
+        #generates the error message
+        raise Exception("Invalid syntax")
+
+
     def match(self,token_type):
         if self.current_token.type==token_type:
-            self.current_token=self.get_next_token()
+            self.current_token=self.lexer.get_next_token()
         else:
             self.error()
 
-    def check(self):
+    def factor(self):
+        token=self.current_token
+        self.match("Integer")
+        return token
+
+    def expression(self):
         #taking the first character
-        self.current_char=self.text[self.pos]
-        self.current_token=self.get_next_token()
         left=self.current_token
         self.match("Integer")#this takes the next character
 
@@ -121,8 +130,10 @@ def main():
             break
         if not inp:
             continue
-        objinter=Interpreter(inp)
-        result=objinter.check()
+
+        lexer=Lexer(inp)
+        objinter=Interpreter(lexer)
+        result=objinter.expression()
         print(result)
         print("If you want to end type\"end\" in the input without quotes")
 
