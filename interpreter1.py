@@ -78,6 +78,16 @@ class Lexer:
             self.advance()
             return token
 
+        if self.current_char=="(":
+            token=Token("Lbracket",self.current_char)
+            self.advance()
+            return token
+
+        if self.current_char==")":
+            token=Token("Rbracket",self.current_char)
+            self.advance()
+            return token
+
         return self.error()
 
 
@@ -99,8 +109,15 @@ class Interpreter:
 
     def divfactor(self):
         token = self.current_token
-        self.match("Integer")
-        return token.value
+        if token.type=="Integer":
+            self.match("Integer")
+            return token.value
+
+        if token.type=="Lbracket":
+            self.match("Lbracket")
+            result=self.expression()
+            self.match("Rbracket")
+            return result
 
     def factor(self):
         result = self.divfactor()
