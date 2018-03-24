@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a9faf5fa-91a9-474a-801c-9a9e04be31c5" name="Default" comment="Added , how to end option">
+    <list default="true" id="a9faf5fa-91a9-474a-801c-9a9e04be31c5" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/interpreter1.py" afterPath="$PROJECT_DIR$/interpreter1.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,8 +17,8 @@
       <file leaf-file-name="interpreter1.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/interpreter1.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="60" column="13" lean-forward="false" selection-start-line="60" selection-start-column="13" selection-end-line="60" selection-end-column="13" />
+            <state relative-caret-position="1836">
+              <caret line="108" column="30" lean-forward="false" selection-start-line="108" selection-start-column="30" selection-end-line="108" selection-end-column="30" />
               <folding />
             </state>
           </provider>
@@ -145,7 +146,14 @@
       <option name="project" value="LOCAL" />
       <updated>1521443590813</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Restructured code such that lexer and parser are different now">
+      <created>1521863066757</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1521863066757</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -176,7 +184,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Added , how to end option" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added , how to end option" />
+    <MESSAGE value="Restructured code such that lexer and parser are different now" />
+    <option name="LAST_COMMIT_MESSAGE" value="Restructured code such that lexer and parser are different now" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -195,8 +204,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/interpreter1.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="60" column="13" lean-forward="false" selection-start-line="60" selection-start-column="13" selection-end-line="60" selection-end-column="13" />
+        <state relative-caret-position="1836">
+          <caret line="108" column="30" lean-forward="false" selection-start-line="108" selection-start-column="30" selection-end-line="108" selection-end-column="30" />
           <folding />
         </state>
       </provider>

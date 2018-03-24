@@ -68,6 +68,16 @@ class Lexer:
             self.advance()
             return token
 
+        if self.current_char=="*":
+            token=Token("Multiply",self.current_char)
+            self.advance()
+            return token
+
+        if self.current_char=="/":
+            token=Token("Divide",self.current_char)
+            self.advance()
+            return token
+
         return self.error()
 
 
@@ -87,31 +97,43 @@ class Interpreter:
         else:
             self.error()
 
-    def factor(self):
-        token=self.current_token
+    def divfactor(self):
+        token = self.current_token
         self.match("Integer")
-        return token
+        return token.value
+
+    def factor(self):
+        result = self.divfactor()
+
+        while self.current_token.type == "Divide":
+            self.match("Divide")
+            result /= self.divfactor()
+
+        return result
+
+    def term(self):
+        result=self.factor()
+
+        while self.current_token.type=="Multiply":
+            self.match("Multiply")
+            result *= self.factor()
+
+        return result
 
     def expression(self):
         #taking the first character
-        left=self.current_token
-        self.match("Integer")#this takes the next character
 
-        result=left.value
+        result=self.term()
         #now every time match is calling the get next token
         while self.current_token.type in ("Plus","Minus"):
             op=self.current_token
 
             if op.value=="+":
                 self.match("Plus")
-                right = self.current_token
-                self.match("Integer")
-                result += right.value
+                result += self.term()
             elif op.value=="-":
                 self.match("Minus")
-                right = self.current_token
-                self.match("Integer")
-                result -= right.value
+                result -= self.term()
             else:
                 self.error()
 
