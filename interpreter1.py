@@ -90,8 +90,25 @@ class Lexer:
 
         return self.error()
 
+class AST:
+    pass
 
-class Interpreter:
+class Binop(AST):
+    def __init__(self,left,op,right):
+        #print("In Binop " + str(op) +"left is "+str(left)+" right is "+str(right))
+        self.left=left
+        self.token=op
+        self.op=op
+        self.right=right
+
+class Num(AST):
+    def __init__(self,token):
+        #print("In Num "+str(token))
+        self.token=token
+        self.value=token.value
+
+
+class Parser:
     def __init__(self,lexer):
         self.lexer=lexer
         self.current_token=self.lexer.get_next_token()
@@ -108,54 +125,99 @@ class Interpreter:
             self.error()
 
     def divfactor(self):
+        #print("divfactor ->")
         token = self.current_token
         if token.type=="Integer":
             self.match("Integer")
-            return token.value
+            return Num(token)
 
         if token.type=="Lbracket":
             self.match("Lbracket")
-            result=self.expression()
+            node=self.expression()
             self.match("Rbracket")
-            return result
+            return node
 
     def factor(self):
-        result = self.divfactor()
+        #print("factor ->")
+        node = self.divfactor()
 
         while self.current_token.type == "Divide":
+            op=self.current_token
             self.match("Divide")
-            result /= self.divfactor()
+            node=Binop(left=node,op=op,right=self.divfactor())
 
-        return result
+        #print("End Factor")
+
+        return node
 
     def term(self):
-        result=self.factor()
+        #print("Term ->")
+        node=self.factor()
 
         while self.current_token.type=="Multiply":
+            op=self.current_token
             self.match("Multiply")
-            result *= self.factor()
+            node = Binop(left=node, op=op, right=self.factor())
 
-        return result
+        #print("End Term")
+
+        return node
 
     def expression(self):
         #taking the first character
-
-        result=self.term()
+        #print("Expression ->")
+        node=self.term()
         #now every time match is calling the get next token
         while self.current_token.type in ("Plus","Minus"):
             op=self.current_token
 
             if op.value=="+":
                 self.match("Plus")
-                result += self.term()
+                node = Binop(left=node,op=op, right=self.term())
             elif op.value=="-":
                 self.match("Minus")
-                result -= self.term()
+                node = Binop(left=node, op=op, right=self.term())
             else:
                 self.error()
+        #print("End Expression ->")
+        return node
 
-        return result
+    def parse(self):
+        return self.expression()
 
+
+class Interpreter():
+    def __init__(self,parser):
+        self.parser=parser
+
+    def visit(self,node):
+        if type(node).__name__ == "Binop":
+            return self.visit_Binop(node)
+        elif type(node).__name__ == "Num":
+            return self.visit_Num(node)
+        else:
+            raise Exception("no visit method of this kind of node")
+
+
+    def visit_Binop(self,node):
+        if node.op.type=="Plus":
+            return self.visit(node.left) + self.visit(node.right)
+        elif node.op.type=="Minus":
+            return self.visit(node.left) - self.visit(node.right)
+        elif node.op.type=="Multiply":
+            return self.visit(node.left) * self.visit(node.right)
+        elif node.op.type=="Divide":
+            return self.visit(node.left) / self.visit(node.right)
+        else:
+            #This situation wont come still writing
+            raise Exception("No such binary operation defined :(")
+
+    def visit_Num(self,node):
+        return node.value
+
+    def inter(self):
+        tree=self.parser.parse()
+        return self.visit(tree)
 
 def main():
     while 1:
@@ -171,8 +233,9 @@ def main():
             continue
 
         lexer=Lexer(inp)
-        objinter=Interpreter(lexer)
-        result=objinter.expression()
+        parser=Parser(lexer)
+        interp=Interpreter(parser)
+        result=interp.inter()
         print(result)
         print("If you want to end type\"end\" in the input without quotes")
 
